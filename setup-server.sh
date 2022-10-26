@@ -47,9 +47,6 @@ USERNAME="minecraft"
 useradd -m $USERNAME
 
 # Install minecraft server
-SYSTEMD_FILE_URL="https://raw.githubusercontent.com/Lorkiyn/minecraft-server-tools/main/minecraft.service"
-SYSTEMD_SERVICE="minecraft.service"
-SYSTEMD_FILE_PATH="/etc/systemd/system/$SYSTEMD_SERVICE"
 MODPACK_SERVER_LOCATION="/home/$USERNAME/server"
 MODPACK_SERVER_LOCATION_TEMP="$MODPACK_SERVER_LOCATION/tmp"
 MODPACK_FILE="$MODPACK_SERVER_LOCATION/modpack.zip"
@@ -60,7 +57,7 @@ function unpack() {
     while [[ !(-d "$MODPACK_SERVER_LOCATION_TEMP/mods") ]]
     do
         if [ $i -ge $MAX_DEPTH ]; then
-            echo "Could not find start.sh in $MODPACK_SERVER_LOCATION after unpacking"
+            echo "Could not find mods folder in $MODPACK_SERVER_LOCATION after unpacking"
             exit
         fi
 
@@ -89,7 +86,12 @@ chmod +x "$MODPACK_SERVER_LOCATION/start.sh"
 chown -R $USERNAME:$USERNAME $MODPACK_SERVER_LOCATION
 
 echo "script.sh found!"
+
 # Setup systemd
+SYSTEMD_FILE_URL="https://raw.githubusercontent.com/Lorkiyn/minecraft-server-tools/main/minecraft.service"
+SYSTEMD_SERVICE="minecraft.service"
+SYSTEMD_FILE_PATH="/etc/systemd/system/$SYSTEMD_SERVICE"
+
 echo "Generating systemd service..."
 wget -O $SYSTEMD_FILE_PATH $SYSTEMD_FILE_URL
 systemctl daemon-reload
